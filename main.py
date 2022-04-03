@@ -1,13 +1,18 @@
 
-from os import sep
 import mysql.connector as sqlcon
 
+#source code for password manager
+
 db = sqlcon.connect(
-    host = "localhost",
-    user = "root",
-    passwd = "1234",
-    database = "maindatabase"
+    host = "be8eqv8hc2ft6tohf6g2-mysql.services.clever-cloud.com",
+    user = "ugkmslg5t4mphoxt",
+    passwd = "98s0GionzKkjIZobY5Iz",
+    database = "be8eqv8hc2ft6tohf6g2"
 )
+
+if db.is_connected()==True:
+      print("Successfully connected to Database")
+
 
 print('----------Welcome To Password Manager----------')
 print('-----MENU-----')
@@ -24,14 +29,20 @@ print('5. Delete All Password--')
 print('------------------------')
 print('6. Display All Password')
 print('------------------------')
-print('7.Exit')
+print('7. Update Password')
+print('------------------------')
+print('8. Exit')
+
+
 
 
 mycursor = db.cursor()
+mycursor.execute("CREATE TABLE if not exists Passdb (websitename VARCHAR(50), username VARCHAR(50), email VARCHAR(50), password VARCHAR(50))")
+
 
 while True:
     #Adding New Password
-    ch = int(input('Enter your choice from (1-7): '))
+    ch = int(input('Enter your choice from (1-8): '))
     if ch == 1:
         
 
@@ -39,10 +50,12 @@ while True:
       username = input('Enter the username used: ')
       email = input('E-Mail: ')
       passwod = input('Password: ')
-     
+      ls = (websitename,username,email,passwod)
       #Adding data to database
-      mycursor.execute("INSERT INTO Passdb (websitename, username, email, password) VALUES (%s, %s, %s, %s)",(websitename, username, email, passwod))
+      mycursor.execute('''INSERT INTO Passdb (websitename, username, email, password) VALUES (%s, %s, %s, %s)''',ls)
       db.commit()  
+
+      print("Data Saved")
 
       myweb = (websitename,)
 
@@ -125,7 +138,29 @@ while True:
             for s in z:
                 print('Website: '  + s[0] +  '| E-Mail: ', s[1] +  '| UserName: ', s[2], '| Password: ' + s[3])
 
-    elif ch == 7:
+    #Update Password
+    elif ch==7:
+        
+        website = input('Enter name of the website: ')
+
+        mylis = (website,)
+
+        mycursor.execute('SELECT websitename FROM Passdb')
+
+        z = mycursor.fetchall()
+        print(z)
+        
+        #Checking website exist or not
+        if mylis in z:
+            newPassword = input('Enter the new password: ')
+            ls = (newPassword,website)
+            mycursor.execute('UPDATE Passdb SET password=%s WHERE websitename=%s', ls)
+            print('Password Changed: ', newPassword)
+
+        else:
+            print('No password found for the given site.')
+
+    elif ch == 8:
         ans = input('Do you want to exit(y/n): ')
         if ans == 'y':
             print('App closed!')
@@ -138,19 +173,5 @@ while True:
         print('Invalid Input!')
 
 
-#mycursor.execute("CREATE DATABASE maindatabase")
-
-#mycursor.execute("CREATE TABLE Passdb (websitename VARCHAR(50), username VARCHAR(50), email VARCHAR(50), password VARCHAR(50))")
-
-#Adding Data to database 
-"""mycursor.execute("INSERT INTO Passdb (websitename, username, email, password) VALUES (%s, %s, %s, %s)",(websitename, username, email, passwod))
-db.commit()  
-
-mycursor.execute("SELECT * FROM Passdb")
-
-for x in mycursor:
-    print(x)"""
-
-#Retriving Data from database
 
 
