@@ -4,10 +4,10 @@ import mysql.connector as sqlcon
 #source code for password manager
 
 db = sqlcon.connect(
-    host = "be8eqv8hc2ft6tohf6g2-mysql.services.clever-cloud.com",
-    user = "ugkmslg5t4mphoxt",
-    passwd = "98s0GionzKkjIZobY5Iz",
-    database = "be8eqv8hc2ft6tohf6g2"
+    host = "*********",
+    user = "***********",
+    passwd = "***********",
+    database = "*********"
 )
 
 if db.is_connected()==True:
