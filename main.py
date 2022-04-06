@@ -2,14 +2,14 @@ import email
 import pyrebase
 
 firebaseConfig = {
-    'apiKey': "AIzaSyDawwJkFB-1qLskM503K8C-T3pBLXqDheg",
-    'authDomain': "python-aaf66.firebaseapp.com",
-    'databaseURL':"https://python-aaf66-default-rtdb.firebaseio.com/",
-    'projectId': "python-aaf66",
-    'storageBucket': "python-aaf66.appspot.com",
-    'messagingSenderId': "1039266094652",
-    'appId': "1:1039266094652:web:5d3a0a2a040c5ad241ad39",
-    'measurementId': "G-XG2XRX3KSD"
+    'apiKey': "*************",
+    'authDomain': "************",
+    'databaseURL:"***************",
+    'projectId': "*******",
+    'storageBucket': "********",
+    'messagingSenderId': "*********",
+    'appId': "****************",
+    'measurementId': "**************"
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
