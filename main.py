@@ -4,7 +4,7 @@ import pyrebase
 firebaseConfig = {
     'apiKey': "*************",
     'authDomain': "************",
-    'databaseURL:"***************",
+    'databaseURL':"***************",
     'projectId': "*******",
     'storageBucket': "********",
     'messagingSenderId': "*********",
