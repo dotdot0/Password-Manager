@@ -1,177 +1,138 @@
+import email
+import pyrebase
 
-import mysql.connector as sqlcon
+firebaseConfig = {
+    'apiKey': "AIzaSyDawwJkFB-1qLskM503K8C-T3pBLXqDheg",
+    'authDomain': "python-aaf66.firebaseapp.com",
+    'databaseURL':"https://python-aaf66-default-rtdb.firebaseio.com/",
+    'projectId': "python-aaf66",
+    'storageBucket': "python-aaf66.appspot.com",
+    'messagingSenderId': "1039266094652",
+    'appId': "1:1039266094652:web:5d3a0a2a040c5ad241ad39",
+    'measurementId': "G-XG2XRX3KSD"
+}
 
-#source code for password manager
+firebase = pyrebase.initialize_app(firebaseConfig)
 
-db = sqlcon.connect(
-    host = "be8eqv8hc2ft6tohf6g2-mysql.services.clever-cloud.com",
-    user = "ugkmslg5t4mphoxt",
-    passwd = "98s0GionzKkjIZobY5Iz",
-    database = "be8eqv8hc2ft6tohf6g2"
-)
+loginstatus = None
 
-if db.is_connected()==True:
-      print("Successfully connected to Database")
-
-
-print('----------Welcome To Password Manager----------')
-print('-----MENU-----')
-print('------------------------')
-print('1. Add New Password--')
-print('------------------------')
-print('2. Find Password For Given Site--')
-print('------------------------')
-print('3. Total Password Stored--')
-print('------------------------')
-print('4. Delete Password--')
-print('------------------------')
-print('5. Delete All Password--')
-print('------------------------')
-print('6. Display All Password')
-print('------------------------')
-print('7. Update Password')
-print('------------------------')
-print('8. Exit')
+db = firebase.database()
+auth = firebase.auth()
+def stringmod(s):
+    for i in range(0, len(s)+1):
+        if s[i] == '@':
+            return s[0:i]
 
 
 
+print('1.Log In: ')
+print('2.Sign Up: ')
 
-mycursor = db.cursor()
-mycursor.execute("CREATE TABLE if not exists Passdb (websitename VARCHAR(50), username VARCHAR(50), email VARCHAR(50), password VARCHAR(50))")
+def login():
+    email1 = input('E-Mail: ')
+    passwd = input('Password: ')
 
+    try:
+        user = auth.sign_in_with_email_and_password(email1, passwd)
+        print('Successfully Logged In!')
+        print('----------------------------------------------------')
+        loginstatus = True
 
-while True:
-    #Adding New Password
-    ch = int(input('Enter your choice from (1-8): '))
-    if ch == 1:
-        
+    except:
+        print('Invalid Email or Password!')
+        print('----------------------------------------------------')
+        loginstatus = False
 
-      websitename = input('Enter the website name: ')
-      username = input('Enter the username used: ')
-      email = input('E-Mail: ')
-      passwod = input('Password: ')
-      ls = (websitename,username,email,passwod)
-      #Adding data to database
-      mycursor.execute('''INSERT INTO Passdb (websitename, username, email, password) VALUES (%s, %s, %s, %s)''',ls)
-      db.commit()  
+    if loginstatus == True:
 
-      print("Data Saved")
+        while True: 
 
-      myweb = (websitename,)
+            print('1 --> Add New Password')
+            print('2 --> Delete Password')
+            print('3 --> Update Password')
+            print('4 --> Find Password')
+            print('5 --> Exit')
 
-      mycursor.execute("SELECT websitename,username,email,password FROM Passdb WHERE websitename = %s", myweb)
+            ch = int(input(('Enter Your Choice(1-5): ')))
 
-      #Showing the inserted data
-      for x in mycursor:
-         print('WebSite: ' + x[0])
-         print('E-Mail: ' + x[1])
-         print('UserName: ' + x[2])
-         print('Password: ' + x[3])
+            #Add Password
 
-    elif ch == 2: 
-        #Find Password
-        webname = input('Enter the name of the website: ')
-        mydata = (webname,)
-        
-        #Checking whether a website exist
-        mycursor.execute("SELECT websitename FROM Passdb")
-
-        x = mycursor.fetchall()#Returns a list with tuples of name of websites
-
-        #Checking whether website in database or not
-        if mydata in x:
-
-            mycursor.execute("SELECT username,password FROM Passdb WHERE websitename = %s", mydata)
-
-            for x in mycursor:
-                print('UserName: ' + x[0])
-                print('Password: ' + x[1])
-
-        else:
-            print('No password for the website')
-
-    #No Password Stored       
-    elif ch == 3:
-        mycursor.execute("SELECT * FROM Passdb")
-        
-        #x --> list contaning all the data
-        x = mycursor.fetchall()
-
-        print('Number Of Password Stored: ' + str(len(x)))
-
-    elif ch == 4:
-
-        web_name = input('Enter the name of the website: ')
-        mywebs = (web_name,)
-
-
-        #Check whether website exist
-        mycursor.execute("SELECT websitename FROM Passdb")
-        y = mycursor.fetchall()
-
-        if mywebs in y:
-
-            mycursor.execute("DELETE FROM Passdb WHERE websitename = %s", mywebs)
-
-            print('Password of Website: ', web_name, ' is deleted')
-
-        else:
-            print('Website not in database')
-
-    elif ch == 5:
-
-        #Delete all rows
-        mycursor.execute("DELETE FROM Passdb")
-
-        print('All passwords have been removed👍')
-
-    elif ch == 6:
-
-        mycursor.execute("SELECT * FROM Passdb")
-
-        z = mycursor.fetchall()
-
-        if len(z) == 0:
-            print('No Password Are Stored')
-
-        else:
-            for s in z:
-                print('Website: '  + s[0] +  '| E-Mail: ', s[1] +  '| UserName: ', s[2], '| Password: ' + s[3])
-
-    #Update Password
-    elif ch==7:
-        
-        website = input('Enter name of the website: ')
-
-        mylis = (website,)
-
-        mycursor.execute('SELECT websitename FROM Passdb')
-
-        z = mycursor.fetchall()
-        print(z)
-        
-        #Checking website exist or not
-        if mylis in z:
-            newPassword = input('Enter the new password: ')
-            ls = (newPassword,website)
-            mycursor.execute('UPDATE Passdb SET password=%s WHERE websitename=%s', ls)
-            print('Password Changed: ', newPassword)
-
-        else:
-            print('No password found for the given site.')
-
-    elif ch == 8:
-        ans = input('Do you want to exit(y/n): ')
-        if ans == 'y':
-            print('App closed!')
-            break
+            if ch == 1:
+                websitename = input('Website Name: ')
+                username = input('User Name: ')
+                email = input('E-Mail: ')
+                passw = input('Password: ')
+                data = {
+                    'website' : websitename,
+                    'user': username,
+                    'password':passw,
+                    'email': email   
+                }
+                s = stringmod(email1)
+                db.child('websites').child(s).child(websitename).set(data)
+                print('Password Added!')
+                print('----------------------------------------------------')
             
-        else:
-            continue
+            #Delete Password
 
-    else:
-        print('Invalid Input!')
+            elif ch == 2:
+                websitename = input('Website Name: ')
+                s = stringmod(email1)
+                db.child('websites').child(s).child(websitename).remove()
+                print('Password Deleted!')
+                print('----------------------------------------------------')
+
+            #Update Password
+
+            elif ch == 3:
+                websitename = input('Website Name: ')
+                password = input('Enter Updated Password: ')
+                s = stringmod(email1)
+                db.child('websites').child(s).child(websitename).update({'password': password})
+                data = db.child('websites').child(s).child(websitename).get()
+                print('New Password:',data.val()['password'])
+                print('----------------------------------------------------')
+            
+            #Display Password
+
+            elif ch == 4:
+                websitename = input('Website Name: ')
+                s = stringmod(email1)
+                try:
+                    data = db.child('websites').child(s).child(websitename).get()
+                    print('Password:',data.val()['password'])
+                    print('UserName:',data.val()['user'])
+                    print('----------------------------------------------------')
+                except:
+                    print('No Password Stored!')
+        
+            elif ch == 5:
+                break
 
 
+def Signup():
+    email = input('E-Mail: ')
+    passwd = input('Password: ')
+    try:
+        auth.create_user_with_email_and_password(email, passwd)
+        print('Account Created!')
+        print('----------------------------------------------------')
+        print('Login To Your Account: ')
+        print('----------------------------------------------------')
+        login()
+    except:
+        print('User already exist!')
+        print('Login To Your Account!')
+        login()
 
+ch = int(input('1 --> Login || 2 --> Create New Account :-- '))
 
+if ch == 1:
+    print('----Login----')
+    print('----------------------------------------------------')
+    login()
+
+elif ch == 2:
+    print('----SignUp----')
+    print('----------------------------------------------------')
+    Signup()
