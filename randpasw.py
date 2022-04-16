@@ -1,6 +1,8 @@
 
 import random
 
+# Random Password Generator
+
 def passwGen():
     mainStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]()}{!@#$%&*/'
 
