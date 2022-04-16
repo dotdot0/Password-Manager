@@ -5,19 +5,22 @@ from randpasw import passwGen
 from cryptography.fernet import Fernet
 
 firebaseConfig = {
-    'apiKey': "AIzaSyDawwJkFB-1qLskM503K8C-T3pBLXqDheg",
-    'authDomain': "python-aaf66.firebaseapp.com",
-    'databaseURL':"https://python-aaf66-default-rtdb.firebaseio.com/",
-    'projectId': "python-aaf66",
-    'storageBucket': "python-aaf66.appspot.com",
-    'messagingSenderId': "1039266094652",
-    'appId': "1:1039266094652:web:5d3a0a2a040c5ad241ad39",
-    'measurementId': "G-XG2XRX3KSD"
+    'apiKey': "**********************",
+    'authDomain': "********************",
+    'databaseURL':"********************",
+    'projectId': "**********",
+    'storageBucket': "**********",
+    'messagingSenderId': "********************",
+    'appId': "*************************************",
+    'measurementId': "***********"
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 
+#Login Status
 loginstatus = [False,]
+
+
 
 db = firebase.database()
 auth = firebase.auth()
@@ -34,11 +37,13 @@ def encrypter(password):
     p_en=f_obj.encrypt(p)
     return p_en.decode('utf-8'),key.decode('utf-8')
 
+#login function
 def login():
     email1 = input('E-Mail: ')
     passwd = input('Password: ')
     s = stringmod(email1)
 
+    #Getting all website name from database
     def passwordgetter():
              data = db.child('websites').child(s).get()
              if data.val() != None:
@@ -49,7 +54,7 @@ def login():
              else:
                  print('Adding...')
              
-
+#Log In
     try:
         if passwd == 'resetpassword':
             emailreset = input('Enter your E-Mail: ')
@@ -93,6 +98,7 @@ def login():
 
                 websitename = input('Website Name: ')
                 
+                #Website in database or not
                 if websitename in ls:
                     print('Password for the website already strored!')
                     print('-'*30)
